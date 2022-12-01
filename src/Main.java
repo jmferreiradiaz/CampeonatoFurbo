@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    static List<String> listadoEquipos;
+    static List<String> listadoEquipos, listadoCuartos, listadoSemifinal;
 
     static int golesA,golesB;
     public static void main(String[] args) {
@@ -27,11 +27,19 @@ public class Main {
             "golesMarcados int", "golesRecibidos int"};
             ManagerBBDD.crearTabla("Equipos", camposEquipo);
 
-            String []camposOctavos = {"equipoA varchar(25)", "equipoB varchar(25)", "golesA int", "golesB int"};
-            ManagerBBDD.crearTabla("Octavos", camposOctavos);
-            ManagerBBDD.crearTabla("Cuartos", camposOctavos);
-            ManagerBBDD.crearTabla("Final", camposOctavos);
+            String []campos = {"equipoA varchar(25)", "equipoB varchar(25)", "golesA int", "golesB int"};
+            ManagerBBDD.crearTabla("Octavos", campos);
+            ManagerBBDD.crearTabla("Cuartos", campos);
+            ManagerBBDD.crearTabla("Final", campos);
             //endregion
+
+            /*int opc = menu();
+                 switch (opc) {
+                     case 1:
+                         break;
+                     default:
+                 }*/
+
 
             //region Octavos
             leerEquiposFicheros();
@@ -42,6 +50,10 @@ public class Main {
                 String equipoB = sacarEquipoAleatorio();
                 System.out.println(equipoA+" VS "+equipoB);
                 partido(equipoA, equipoB);
+                String [] columnasOctavos = {"equipoA", "equipoB", "golesA", "golesB"};
+                String [] columnasValoresOctavos = {equipoA, equipoB, Integer.toString(golesA), Integer.toString(golesB)};
+                ManagerBBDD.insertarTablas("Octavos", columnasOctavos, columnasValoresOctavos);
+                ManagerBBDD.mostrarSelect("Octavos",columnasOctavos);
             }
             //endregion
         }catch (SQLException e){
@@ -49,6 +61,26 @@ public class Main {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int menu() {
+        // En opc guardaremos la opción seleccionada por el usuario
+        int opc;
+        Scanner sc = new Scanner(System.in);
+
+        // Imprimimos el menú con las diversas opciones
+        System.out.println("1. Iniciar Octavos");
+        System.out.println("2. Iniciar Cuartos");
+        System.out.println("3. Iniciar Semifinales");
+        System.out.println("4. Iniciar la Final");
+        System.out.println("5. Reiniciar");
+        System.out.println("6. Salir");
+
+
+        // Leemos la opción de teclado
+        opc = sc.nextInt();
+
+        return opc;
     }
 
     /***
@@ -90,7 +122,7 @@ public class Main {
         long start = System.currentTimeMillis();
         long total = TimeUnit.SECONDS.toMillis(90);
         long remain;
-        while ((remain = start + total - System.currentTimeMillis()) > 0 || golesA == 0 && golesB == 0) {
+        while ((remain = start + total - System.currentTimeMillis()) > 0 || golesA == 0 && golesB == 0 && golesA == golesB) {
             try {
                 int randA = (int)(Math.random()*10)+1;
                 int randB = (int)(Math.random()*10)+1;
@@ -107,12 +139,12 @@ public class Main {
                     golesA++;
                     posesionA = 50;
                     posesionB = 50;
-                    System.out.println("El "+equipoA+ " ha marcado gol");
+                    System.out.println(equipoA+ " ha marcado gol");
                 } else if(posesionB >= 95){
                     golesB++;
                     posesionA = 50;
                     posesionB = 50;
-                    System.out.println("El "+equipoB+ " ha marcado gol");
+                    System.out.println(equipoB+ " ha marcado gol");
                 }
                 long reSec = TimeUnit.MILLISECONDS.toSeconds(remain);
 

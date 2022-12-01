@@ -53,8 +53,30 @@ public class ManagerBBDD {
                 sql += campos[i] + ",";
             }
         }
+        sql += ") VALUES (";
+
+        for(int i = 0; i < camposValores.length; i++){
+            if (i == camposValores.length - 1){
+                sql += camposValores[i];
+            } else {
+                sql += "'"+camposValores[i] + "',";
+            }
+        }
         sql += ")";
         System.out.println(sql);
         st.executeUpdate(sql);
+    }
+
+    public static void mostrarSelect (String tabla, String[] columnas) throws SQLException{
+        String sql = "SELECT * FROM "+tabla;
+        ResultSet rs;
+        rs = st.executeQuery(sql);
+        while(rs.next()) {
+            for (String columna: columnas
+            ) {
+                System.out.print(rs.getString(columna)+"\t");
+            }
+            System.out.println();
+        }
     }
 }
