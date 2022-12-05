@@ -23,7 +23,7 @@ public class Main {
             //Borrar tablas
             ManagerBBDD.borrarTablas();
             //region Crear tablas
-            String []camposEquipo = {"id int PRIMARY KEY AUTO_INCREMENT", "equipo varchar(25)", "ganados int", "empatados int", "perdidos int",
+            String []camposEquipo = {"equipo varchar(25)", "ganados int", "empatados int", "perdidos int",
             "golesMarcados int", "golesRecibidos int"};
             ManagerBBDD.crearTabla("Equipos", camposEquipo);
 
@@ -33,12 +33,27 @@ public class Main {
             ManagerBBDD.crearTabla("Final", campos);
             //endregion
 
-            /*int opc = menu();
+            //Insertar los equipos en la tabla equipos
+            insertarEquiposListado();
+
+
+            int opc = menu();
                  switch (opc) {
                      case 1:
+                         sacarEquipoAleatorio(listadoEquipos);
+                         break;
+                     case 2:
+                         break;
+                     case 3:
+                         break;
+                     case 4:
+                         break;
+                     case 5:
+                         break;
+                     case 6:
                          break;
                      default:
-                 }*/
+                 }
 
 
             //region Octavos
@@ -97,11 +112,26 @@ public class Main {
             listadoEquipos.add(sc.nextLine());
         }
 
-        for (String equipo : listadoEquipos) {
-            System.out.println(equipo);
+        return listadoEquipos;
+    }
+
+    /***
+     * Lee las personas del listado, lo recorre y lo inserta en la base de datos
+     * @throws SQLException
+     * @throws FileNotFoundException
+     */
+    private static void insertarEquiposListado() throws SQLException, FileNotFoundException {
+        //Leémos los equipos del fichero y las metemos en la lista
+        leerEquiposFicheros();
+
+        //Recorremos el arrayList para insertar los equipos
+        for (String equipo : leerEquiposFicheros()) {
+            ManagerBBDD.insertarTablas("Equipos", new String[]{"equipo", "ganados", "empatados", "perdidos", "golesMarcados", "golesRecibidos"}
+                    , new String[]{equipo, String.valueOf(0), String.valueOf(0), String.valueOf(0), String.valueOf(0), String.valueOf(0)});
         }
 
-        return listadoEquipos;
+        //Listamos los datos
+        ManagerBBDD.listarTabla("Equipos");
     }
 
     /***
@@ -116,7 +146,14 @@ public class Main {
         return equipo;
     }
 
-    private static void partido(String equipoA, String equipoB){
+    private static void partido(List<String> listado){
+
+        //sacamos dos equipos aleatorios
+        String equipoA = sacarEquipoAleatorio();
+        String equipoB = sacarEquipoAleatorio();
+
+        listado.remove();
+
         int posesionA = 50;
         int posesionB = 50;
         long start = System.currentTimeMillis();

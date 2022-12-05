@@ -35,7 +35,6 @@ public class ManagerBBDD {
             }
         }
         sql += ")";
-        System.out.println(sql);
         st.executeUpdate(sql);
     }
 
@@ -63,8 +62,29 @@ public class ManagerBBDD {
             }
         }
         sql += ")";
-        System.out.println(sql);
         st.executeUpdate(sql);
+    }
+
+    /***
+     * Método que lista todos los datos de la tabla que pasemos como parámetro
+     * @param tabla
+     * @throws SQLException
+     */
+    public static void listarTabla(String tabla) throws SQLException {
+        String sql = "SELECT * FROM "+tabla;
+        ResultSet rs;
+        rs = st.executeQuery(sql);
+        System.out.println();
+        System.out.println(tabla);
+        while(rs.next()){
+            ResultSetMetaData md = rs.getMetaData();
+            int numCol = md.getColumnCount();
+            for (int i = 1; i <= numCol; i++){
+                System.out.print(rs.getString(i)+"   ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     public static void mostrarSelect (String tabla, String[] columnas) throws SQLException{
